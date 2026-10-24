@@ -1,0 +1,27 @@
+# A project's own rules, layered on the bundled rules.yml. These are sorl-thumbnail's, a Python
+# library with no front end, where fonts, web assets and Node packages never belong.
+rules:
+  - name: fonts
+    severity: cleanup
+    paths: ["*.ttf", "*.otf", "*.woff", "*.woff2", "*.eot", "*.lff"]
+    message: Font files. Remove them, sorl-thumbnail ships no fonts.
+
+  - name: web-assets
+    severity: cleanup
+    paths: ["public/**", "static/**", "assets/**"]
+    message: Web assets. Remove them, this is a Python library without a front end.
+
+  - name: node-packages
+    severity: cleanup
+    paths: ["package.json", "package-lock.json", "yarn.lock", "pnpm-lock.yaml"]
+    message: Node packages. Remove them, this project has no JavaScript build.
+
+  - name: build-output
+    severity: cleanup
+    paths: ["build/**", "dist/**"]
+    message: Build output. Remove it.
+
+  - name: gitignore
+    severity: cleanup
+    paths: [".gitignore"]
+    message: Leave .gitignore as it is unless the change needs it, and say why in the description.

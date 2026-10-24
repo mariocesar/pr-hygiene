@@ -1,0 +1,24 @@
+{"path": ".gitignore", "rule": "gitignore", "severity": "cleanup", "message": "Leave .gitignore as it is unless the change needs it, and say why in the description."}
+{"path": ".vscode/extensions.json", "rule": "editor-settings", "severity": "cleanup", "message": "Editor settings. Remove them and keep editor files in your global gitignore."}
+{"path": ".vscode/launch.json", "rule": "editor-settings", "severity": "cleanup", "message": "Editor settings. Remove them and keep editor files in your global gitignore."}
+{"path": ".vscode/settings.json", "rule": "editor-automatic-tasks", "severity": "block", "message": "Turns on tasks that run as soon as the folder opens in the editor."}
+{"path": ".vscode/spellright.dict", "rule": "editor-settings", "severity": "cleanup", "message": "Editor settings. Remove them and keep editor files in your global gitignore."}
+{"path": ".vscode/tasks.json", "rule": "editor-autorun-task", "severity": "block", "message": "A task that runs as soon as the folder opens in the editor."}
+{"path": "public/fonts/README.md", "rule": "web-assets", "severity": "cleanup", "message": "Web assets. Remove them, this is a Python library without a front end."}
+{"path": "public/fonts/fa-brands-400.eot", "rule": "fonts", "severity": "cleanup", "message": "Font files. Remove them, sorl-thumbnail ships no fonts."}
+{"path": "public/fonts/fa-brands-400.svg", "rule": "web-assets", "severity": "cleanup", "message": "Web assets. Remove them, this is a Python library without a front end."}
+{"path": "public/fonts/fa-brands-400.ttf", "rule": "fonts", "severity": "cleanup", "message": "Font files. Remove them, sorl-thumbnail ships no fonts."}
+{"path": "public/fonts/fa-brands-400.woff", "rule": "fonts", "severity": "cleanup", "message": "Font files. Remove them, sorl-thumbnail ships no fonts."}
+{"path": "public/fonts/fa-brands-400.woff2", "rule": "fonts", "severity": "cleanup", "message": "Font files. Remove them, sorl-thumbnail ships no fonts."}
+{"path": "public/fonts/fa-regular-400.eot", "rule": "fonts", "severity": "cleanup", "message": "Font files. Remove them, sorl-thumbnail ships no fonts."}
+{"path": "public/fonts/fa-regular-400.svg", "rule": "web-assets", "severity": "cleanup", "message": "Web assets. Remove them, this is a Python library without a front end."}
+{"path": "public/fonts/fa-regular-400.ttf", "rule": "fonts", "severity": "cleanup", "message": "Font files. Remove them, sorl-thumbnail ships no fonts."}
+{"path": "public/fonts/fa-regular-400.woff", "rule": "fonts", "severity": "cleanup", "message": "Font files. Remove them, sorl-thumbnail ships no fonts."}
+{"path": "public/fonts/fa-regular-400.woff2", "rule": "fonts", "severity": "cleanup", "message": "Font files. Remove them, sorl-thumbnail ships no fonts."}
+{"path": "public/fonts/fa-regular.lff", "rule": "whitespace-padding", "severity": "hold", "message": "A line that starts with a long run of whitespace, which pushes its content off the screen."}
+{"path": "public/fonts/fa-solid-300.ttf", "rule": "script-in-binary-name", "severity": "block", "message": "Text inside a file named like a binary asset. Scripts get hidden under font and image names this way."}
+{"path": "public/fonts/fa-solid-900.eot", "rule": "fonts", "severity": "cleanup", "message": "Font files. Remove them, sorl-thumbnail ships no fonts."}
+{"path": "public/fonts/fa-solid-900.svg", "rule": "web-assets", "severity": "cleanup", "message": "Web assets. Remove them, this is a Python library without a front end."}
+{"path": "public/fonts/fa-solid-900.ttf", "rule": "fonts", "severity": "cleanup", "message": "Font files. Remove them, sorl-thumbnail ships no fonts."}
+{"path": "public/fonts/fa-solid-900.woff", "rule": "fonts", "severity": "cleanup", "message": "Font files. Remove them, sorl-thumbnail ships no fonts."}
+{"path": "public/fonts/fa-solid-900.woff2", "rule": "fonts", "severity": "cleanup", "message": "Font files. Remove them, sorl-thumbnail ships no fonts."}

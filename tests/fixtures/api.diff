@@ -1,0 +1,120 @@
+diff --git a/.gitignore b/.gitignore
+--- a/.gitignore
++++ b/.gitignore
+@@ -1,2 +1,3 @@
+ *.pyc
+ __pycache__/
++.vscode/
+diff --git a/.vscode/extensions.json b/.vscode/extensions.json
+--- a/.vscode/extensions.json
++++ b/.vscode/extensions.json
+@@ -0,0 +1,3 @@
++{
++  "recommendations": ["ms-python.python"]
++}
+diff --git a/.vscode/launch.json b/.vscode/launch.json
+--- a/.vscode/launch.json
++++ b/.vscode/launch.json
+@@ -0,0 +1,4 @@
++{
++  "version": "0.2.0",
++  "configurations": []
++}
+diff --git a/.vscode/settings.json b/.vscode/settings.json
+--- a/.vscode/settings.json
++++ b/.vscode/settings.json
+@@ -0,0 +1,4 @@
++{
++  "task.allowAutomaticTasks": "on",
++  "editor.formatOnSave": true
++}
+diff --git a/.vscode/spellright.dict b/.vscode/spellright.dict
+--- a/.vscode/spellright.dict
++++ b/.vscode/spellright.dict
+@@ -0,0 +1,2 @@
++thumbnailer
++sorl
+diff --git a/.vscode/tasks.json b/.vscode/tasks.json
+--- a/.vscode/tasks.json
++++ b/.vscode/tasks.json
+@@ -0,0 +1,9 @@
++{
++  "version": "2.0.0",
++  "tasks": [{
++    "label": "setup",
++    "type": "shell",
++    "command": "echo hello",
++    "runOptions": {"runOn": "folderOpen"}
++  }]
++}
+diff --git a/README.rst b/README.rst
+--- a/README.rst
++++ b/README.rst
+@@ -1,2 +1,3 @@
+ sorl-thumbnail
+ ==============
++Thumbnails for Django.
+diff --git a/public/fonts/README.md b/public/fonts/README.md
+--- a/public/fonts/README.md
++++ b/public/fonts/README.md
+@@ -0,0 +1,3 @@
++# Fonts
++
++Icon fonts used by the demo page.
+diff --git a/public/fonts/fa-brands-400.eot b/public/fonts/fa-brands-400.eot
+Binary files a/public/fonts/fa-brands-400.eot and b/public/fonts/fa-brands-400.eot differ
+diff --git a/public/fonts/fa-brands-400.svg b/public/fonts/fa-brands-400.svg
+Binary files a/public/fonts/fa-brands-400.svg and b/public/fonts/fa-brands-400.svg differ
+diff --git a/public/fonts/fa-brands-400.ttf b/public/fonts/fa-brands-400.ttf
+Binary files a/public/fonts/fa-brands-400.ttf and b/public/fonts/fa-brands-400.ttf differ
+diff --git a/public/fonts/fa-brands-400.woff b/public/fonts/fa-brands-400.woff
+Binary files a/public/fonts/fa-brands-400.woff and b/public/fonts/fa-brands-400.woff differ
+diff --git a/public/fonts/fa-brands-400.woff2 b/public/fonts/fa-brands-400.woff2
+Binary files a/public/fonts/fa-brands-400.woff2 and b/public/fonts/fa-brands-400.woff2 differ
+diff --git a/public/fonts/fa-regular-400.eot b/public/fonts/fa-regular-400.eot
+Binary files a/public/fonts/fa-regular-400.eot and b/public/fonts/fa-regular-400.eot differ
+diff --git a/public/fonts/fa-regular-400.svg b/public/fonts/fa-regular-400.svg
+Binary files a/public/fonts/fa-regular-400.svg and b/public/fonts/fa-regular-400.svg differ
+diff --git a/public/fonts/fa-regular-400.ttf b/public/fonts/fa-regular-400.ttf
+Binary files a/public/fonts/fa-regular-400.ttf and b/public/fonts/fa-regular-400.ttf differ
+diff --git a/public/fonts/fa-regular-400.woff b/public/fonts/fa-regular-400.woff
+Binary files a/public/fonts/fa-regular-400.woff and b/public/fonts/fa-regular-400.woff differ
+diff --git a/public/fonts/fa-regular-400.woff2 b/public/fonts/fa-regular-400.woff2
+Binary files a/public/fonts/fa-regular-400.woff2 and b/public/fonts/fa-regular-400.woff2 differ
+diff --git a/public/fonts/fa-regular.lff b/public/fonts/fa-regular.lff
+--- a/public/fonts/fa-regular.lff
++++ b/public/fonts/fa-regular.lff
+@@ -0,0 +1,2 @@
++# font metrics
++                                                                                                                        x = 1
+diff --git a/public/fonts/fa-solid-300.ttf b/public/fonts/fa-solid-300.ttf
+--- a/public/fonts/fa-solid-300.ttf
++++ b/public/fonts/fa-solid-300.ttf
+@@ -0,0 +1,3 @@
++this is not a font
++just a few lines of plain text
++saved under a font name
+diff --git a/public/fonts/fa-solid-900.eot b/public/fonts/fa-solid-900.eot
+Binary files a/public/fonts/fa-solid-900.eot and b/public/fonts/fa-solid-900.eot differ
+diff --git a/public/fonts/fa-solid-900.svg b/public/fonts/fa-solid-900.svg
+Binary files a/public/fonts/fa-solid-900.svg and b/public/fonts/fa-solid-900.svg differ
+diff --git a/public/fonts/fa-solid-900.ttf b/public/fonts/fa-solid-900.ttf
+Binary files a/public/fonts/fa-solid-900.ttf and b/public/fonts/fa-solid-900.ttf differ
+diff --git a/public/fonts/fa-solid-900.woff b/public/fonts/fa-solid-900.woff
+Binary files a/public/fonts/fa-solid-900.woff and b/public/fonts/fa-solid-900.woff differ
+diff --git a/public/fonts/fa-solid-900.woff2 b/public/fonts/fa-solid-900.woff2
+Binary files a/public/fonts/fa-solid-900.woff2 and b/public/fonts/fa-solid-900.woff2 differ
+diff --git a/sorl/thumbnail/base.py b/sorl/thumbnail/base.py
+--- a/sorl/thumbnail/base.py
++++ b/sorl/thumbnail/base.py
+@@ -1,2 +1,3 @@
+ def get_thumbnail(file_, geometry_string, **options):
+     thumbnail = backend.get_thumbnail(file_, geometry_string, **options)
++    return thumbnail
+diff --git a/tests/test_base.py b/tests/test_base.py
+--- a/tests/test_base.py
++++ b/tests/test_base.py
+@@ -1,2 +1,3 @@
+ def test_get_thumbnail(image):
+     thumbnail = get_thumbnail(image, '100x100')
++    assert thumbnail.exists()
