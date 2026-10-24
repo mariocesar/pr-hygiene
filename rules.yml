@@ -1,0 +1,129 @@
+# Rules bundled with the pr-hygiene action. Every file a pull request adds or changes is matched
+# against all rules and the most severe match counts. Only rules that fit any repository live
+# here; the ones that only make sense for your project go in a rules file of your own.
+#
+#   exclude   .gitignore patterns for files that are never checked, like test fixtures
+#   rules
+#     name      short id, shown in the check output and used to replace or disable a rule
+#     severity  cleanup  the file does not belong: label needs-cleanup, draft, ask to remove it
+#               hold     a maintainer must look before anyone checks the branch out:
+#                        label do-not-check-out (stays until a maintainer removes it), draft
+#               block    a red flag: close the pull request and open an issue asking the
+#                        maintainer to block the author
+#     paths     .gitignore patterns: a pattern without "/" matches the file name at any depth,
+#               one with "/" is anchored at the root, "**" spans directories, "!" negates
+#     content   optional Python regex; the rule only fires when an added line of the file matches
+#     message   what the author or the maintainer reads
+#     enabled   set to false in your own file to drop a bundled rule
+#
+# Try it: git diff --diff-filter=d main | uv run pr-hygiene.py rules.yml
+
+rules:
+  # Code that runs on a maintainer's machine as soon as the branch is opened.
+  - name: editor-autorun-task
+    severity: block
+    paths: ["**/.vscode/tasks.json"]
+    content: '"runOn"\s*:\s*"folderOpen"'
+    message: A task that runs as soon as the folder opens in the editor.
+
+  - name: editor-automatic-tasks
+    severity: block
+    paths: ["**/.vscode/settings.json"]
+    content: 'allowAutomaticTasks'
+    message: Turns on tasks that run as soon as the folder opens in the editor.
+
+  - name: script-in-binary-name
+    severity: block
+    paths: ["*.ttf", "*.otf", "*.woff", "*.woff2", "*.eot", "*.png", "*.jpg", "*.jpeg", "*.gif",
+            "*.ico", "*.pdf", "*.zip", "*.gz", "*.whl"]
+    content: '.'
+    message: >-
+      Text inside a file named like a binary asset. Scripts get hidden under font and image
+      names this way.
+
+  - name: python-startup-hook
+    severity: block
+    paths: ["*.pth", "sitecustomize.py", "usercustomize.py"]
+    message: Runs code every time Python starts. Nothing in this project needs that.
+
+  # Content that hides what it is. Could be an accident, so a maintainer decides.
+  - name: whitespace-padding
+    severity: hold
+    paths: ["*"]
+    content: '^[\t ]{100,}\S'
+    message: >-
+      A line that starts with a long run of whitespace, which pushes its content off the
+      screen.
+
+  - name: escaped-identifiers
+    severity: hold
+    paths: ["*"]
+    content: '(\\u00[0-9a-fA-F]{2}){6,}'
+    message: Names written as unicode escapes, which is how obfuscated scripts hide what they call.
+
+  - name: invisible-characters
+    severity: hold
+    paths: ["*"]
+    # Zero-width and bidi controls, Hangul filler, tag characters and the supplementary
+    # variation selectors. Zero-width joiner and the emoji selector are left out on purpose.
+    content: '[\N{ZERO WIDTH SPACE}\N{ZERO WIDTH NON-JOINER}\N{LEFT-TO-RIGHT MARK}\N{RIGHT-TO-LEFT MARK}\N{LEFT-TO-RIGHT EMBEDDING}-\N{RIGHT-TO-LEFT OVERRIDE}\N{WORD JOINER}-\N{INVISIBLE PLUS}\N{LEFT-TO-RIGHT ISOLATE}-\N{POP DIRECTIONAL ISOLATE}\N{HANGUL FILLER}\N{LANGUAGE TAG}-\N{CANCEL TAG}\N{VARIATION SELECTOR-17}-\N{VARIATION SELECTOR-256}]'  # yamllint disable-line rule:line-length
+    message: Invisible or direction-changing characters in the text.
+
+  - name: download-piped-to-shell
+    severity: hold
+    paths: &code ["*.py", "*.sh", "*.bash", "*.zsh", "*.js", "*.mjs", "*.cjs", "*.ts", "*.yml",
+                  "*.yaml", "*.toml", "*.cfg", "*.ini", "*.json", "*.bat", "*.cmd", "*.ps1"]
+    content: '\b(curl|wget)\b[^|]*\|\s*(ba|z)?sh\b'
+    message: A download piped into a shell.
+
+  - name: encoded-execution
+    severity: hold
+    paths: *code
+    content: '\b(eval|exec|Function)\s*\(\s*(base64|atob|compile|__import__|bytes\.fromhex|codecs\.decode|Buffer\.from)\b'  # yamllint disable-line rule:line-length
+    message: Code built at run time from an encoded string.
+
+  # Files that have no business in a change to any project.
+  - name: editor-settings
+    severity: cleanup
+    paths: ["**/.vscode/**", "**/.idea/**", "*.code-workspace"]
+    message: Editor settings. Remove them and keep editor files in your global gitignore.
+
+  - name: os-files
+    severity: cleanup
+    paths: [".DS_Store", "Thumbs.db", "desktop.ini"]
+    message: Operating system files. Remove them.
+
+  - name: ai-assistant-config
+    severity: cleanup
+    paths: ["**/.claude/**", "**/.cursor/**", ".cursorrules", ".aider*", "CLAUDE.md", "AGENTS.md",
+            "GEMINI.md", ".github/copilot-instructions.md"]
+    message: AI assistant configuration. Remove it, it is personal to your setup.
+
+  - name: node-modules
+    severity: cleanup
+    paths: ["**/node_modules/**"]
+    message: Installed Node packages. Remove them, they are installed from the lockfile.
+
+  - name: build-leftovers
+    severity: cleanup
+    paths: ["**/__pycache__/**", "*.py[cod]", "**/.pytest_cache/**", "**/.mypy_cache/**",
+            "**/.ruff_cache/**", "**/.tox/**", "**/.nox/**", ".coverage", "htmlcov/**",
+            "coverage.xml", "**/*.egg-info/**"]
+    message: Build and test leftovers. Remove them.
+
+  - name: local-environment
+    severity: cleanup
+    paths: [".env", ".env.*", "!.env.example", "!.env.sample", "!.env.template", "**/.venv/**",
+            "**/venv/**"]
+    message: Local environment. Remove it, and rotate anything secret that was in it.
+
+  - name: scratch-files
+    severity: cleanup
+    paths: ["*.log", "*.orig", "*.rej", "*.bak", "*.swp", "*.swo", "*.tmp", "*~", "*.patch",
+            "*.diff"]
+    message: Scratch files. Remove them.
+
+  - name: archives
+    severity: cleanup
+    paths: ["*.zip", "*.tar", "*.tar.gz", "*.tgz", "*.7z", "*.rar", "*.exe", "*.dll"]
+    message: Archives and binaries. Remove them.
