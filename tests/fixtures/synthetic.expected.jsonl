@@ -1,0 +1,8 @@
+{"path": "foo.pth", "rule": "python-startup-hook", "severity": "block", "message": "Runs code every time Python starts. Nothing in this project needs that."}
+{"path": "sorl/x.py", "rule": "encoded-execution", "severity": "hold", "message": "Code built at run time from an encoded string."}
+{"path": ".github/workflows/x.yml", "rule": "download-piped-to-shell", "severity": "hold", "message": "A download piped into a shell."}
+{"path": "tests/data/y.png", "rule": "script-in-binary-name", "severity": "block", "message": "Text inside a file named like a binary asset. Scripts get hidden under font and image names this way."}
+{"path": ".vscode/tasks.json", "rule": "editor-settings", "severity": "cleanup", "message": "Editor settings. Remove them and keep editor files in your global gitignore."}
+{"path": "README.rst", "rule": "invisible-characters", "severity": "hold", "message": "Invisible or direction-changing characters in the text."}
+{"path": "sorl/y.py", "rule": "whitespace-padding", "severity": "hold", "message": "A line that starts with a long run of whitespace, which pushes its content off the screen."}
+{"path": "tests/v.py", "rule": "escaped-identifiers", "severity": "hold", "message": "Names written as unicode escapes, which is how obfuscated scripts hide what they call."}

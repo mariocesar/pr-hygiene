@@ -1,0 +1,15 @@
+diff --git notes.txt .idea/notes.txt
+similarity index 80%
+rename from notes.txt
+rename to .idea/notes.txt
+--- notes.txt
++++ .idea/notes.txt
+@@ -1 +1 @@
+-todo
++done
+diff --git src/app.py src/app.py
+--- src/app.py
++++ src/app.py
+@@ -1 +1 @@
+-x = 1
++x = 2

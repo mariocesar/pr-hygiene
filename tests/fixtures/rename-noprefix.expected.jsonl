@@ -1,0 +1,1 @@
+{"path": ".idea/notes.txt", "rule": "editor-settings", "severity": "cleanup", "message": "Editor settings. Remove them and keep editor files in your global gitignore."}
