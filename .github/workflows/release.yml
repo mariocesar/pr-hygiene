@@ -1,0 +1,43 @@
+# Push a tag like v1.2.3: tests run, a GitHub release is created from the CHANGELOG.md section
+# for that version, and the major tag (v1) moves to the same commit.
+name: Release
+
+on:
+  push:
+    tags: ['v[0-9]+.[0-9]+.[0-9]+']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+        with:
+          version: '0.13.5'
+      - run: uv sync --locked
+      - run: uv run pytest
+      - name: Take the release notes from CHANGELOG.md
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          awk -v v="$version" '
+            /^## \[/ { show = index($0, "[" v "]") > 0; next }
+            /^\[/ { show = 0 }
+            show
+          ' CHANGELOG.md > notes.md
+          if ! grep -q '[^[:space:]]' notes.md; then
+            echo "CHANGELOG.md has no section for $version" >&2
+            exit 1
+          fi
+      - run: >-
+          gh release create "$GITHUB_REF_NAME" --verify-tag --title "$GITHUB_REF_NAME"
+          --notes-file notes.md
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Move the major tag
+        run: |
+          major="${GITHUB_REF_NAME%%.*}"
+          git tag --force "$major" "$GITHUB_REF_NAME"
+          git push --force origin "$major"
