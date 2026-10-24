@@ -1,0 +1,41 @@
+# The action protecting its own repository. Apart from `uses: ./` this is the README quick
+# start with a rules file.
+name: PR hygiene
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: Pull request number to check
+        type: string
+        required: true
+      dry_run:
+        description: Only report, do not label, draft, close or comment
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: pr-hygiene-${{ github.event.pull_request.number || inputs.pr }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      # The base branch, for the action and the rules file. Never the pull request.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./
+        with:
+          rules: .github/pr-hygiene.yml
+          pr-number: ${{ inputs.pr }}
+          dry-run: ${{ inputs.dry_run }}
+          draft-token: ${{ secrets.PR_DRAFT_TOKEN }}

@@ -1,0 +1,3 @@
+# This repository's rules, layered on the bundled rules.yml by the workflow. The fixtures are
+# diffs made of exactly what the rules look for, so they are left out.
+exclude: ["tests/fixtures/**"]
