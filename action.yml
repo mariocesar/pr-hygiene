@@ -1,0 +1,91 @@
+name: PR Hygiene
+description: >-
+  Keeps files that don't belong out of pull requests. Matches the changed files against a
+  rules file and labels, drafts or closes the pull request by severity. The code is never
+  checked out.
+author: Mario César
+branding:
+  icon: shield
+  color: orange
+
+inputs:
+  rules:
+    description: >-
+      Path to your rules file, relative to the workspace, which means the base branch has to
+      be checked out. Empty uses the rules bundled with the action.
+    default: ''
+  extend:
+    description: >-
+      Layer your rules file on the bundled rules. A rule with the same name replaces the bundled
+      one, "enabled: false" drops it. Set to false to use your file alone.
+    default: 'true'
+  pr-number:
+    description: >-
+      Pull request number. Empty takes it from the event; set it for workflow_dispatch.
+    default: ''
+  dry-run:
+    description: Report only. No label, comment, draft, close or issue.
+    default: 'false'
+  draft-token:
+    description: >-
+      Personal access token for converting the pull request to a draft, which GITHUB_TOKEN
+      cannot do for pull requests from forks. Without one the pull request is put on hold with
+      the label only.
+    default: ''
+  cleanup-label:
+    description: Label for pull requests with files to remove. Removed again once they are gone.
+    default: needs-cleanup
+  hold-label:
+    description: >-
+      Label for pull requests a maintainer should look at before anyone checks them out. The
+      action never removes it.
+    default: do-not-check-out
+  trusted-associations:
+    description: >-
+      Comma-separated author associations that only get a failed check, with no label, comment,
+      draft or close.
+    default: OWNER,MEMBER,COLLABORATOR
+  block-issue:
+    description: On a block, open an issue asking the repository owner to block the author.
+    default: 'true'
+  github-token:
+    description: Token for the GitHub API. Needs pull-requests write, and issues write for blocks.
+    default: ${{ github.token }}
+
+outputs:
+  worst:
+    description: Worst severity found, one of none, cleanup, hold, block.
+    value: ${{ steps.check.outputs.worst }}
+  count:
+    description: Number of files that matched a rule.
+    value: ${{ steps.check.outputs.count }}
+  hits:
+    description: JSON array of {path, rule, severity, message}, one per matched file.
+    value: ${{ steps.check.outputs.hits }}
+
+runs:
+  using: composite
+  steps:
+    - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+      with:
+        version: '0.13.5'
+        enable-cache: false
+
+    - id: check
+      uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        RULES: ${{ inputs.rules }}
+        EXTEND: ${{ inputs.extend }}
+        PR_NUMBER: ${{ inputs.pr-number }}
+        DRY_RUN: ${{ inputs.dry-run }}
+        DRAFT_TOKEN: ${{ inputs.draft-token }}
+        CLEANUP_LABEL: ${{ inputs.cleanup-label }}
+        HOLD_LABEL: ${{ inputs.hold-label }}
+        TRUSTED: ${{ inputs.trusted-associations }}
+        BLOCK_ISSUE: ${{ inputs.block-issue }}
+      with:
+        github-token: ${{ inputs.github-token }}
+        script: |
+          const run = require(`${process.env.ACTION_PATH}/action.js`);
+          await run({ github, context, core, exec });
