@@ -5,6 +5,8 @@ format. Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-24
+
 ### Added
 
 - The action: matches the files of a pull request against a rules file and labels, drafts or
@@ -18,4 +20,5 @@ format. Versions follow [Semantic Versioning](https://semver.org/).
 - Rules files take a top-level `exclude` list, replace earlier rules by name, and drop a rule
   with `enabled: false`.
 
-[Unreleased]: https://github.com/mariocesar/pr-hygiene/commits/main
+[Unreleased]: https://github.com/mariocesar/pr-hygiene/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/mariocesar/pr-hygiene/releases/tag/v1.0.0
