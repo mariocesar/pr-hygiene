@@ -1,5 +1,6 @@
 """Golden tests. Every tests/fixtures/<name>.diff is paired with <name>.expected.jsonl."""
 
+import os
 import re
 import subprocess
 import sys
@@ -26,6 +27,14 @@ diff --git a/tests/fixtures/x.diff b/tests/fixtures/x.diff
 @@ -0,0 +1 @@
 +hello
 """
+
+
+@pytest.fixture(autouse=True)
+def repo(tmp_path, monkeypatch):
+    """Run the matcher in an empty repository, so this one's .gitignore never counts."""
+    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
+    monkeypatch.chdir(tmp_path)
+    return tmp_path
 
 
 def check(diff, *rules):
@@ -148,6 +157,77 @@ def test_no_rules_file_prints_usage():
     result = check(DIFF)
     assert result.returncode == 1
     assert b"Usage:" in result.stderr
+
+
+IGNORED_RULE = """
+rules:
+  - name: ignored-files
+    severity: hold
+    paths: ["*"]
+    ignored: true
+    message: Ignored.
+"""
+
+
+def added(*paths):
+    return "".join(
+        f"diff --git a/{p} b/{p}\n--- a/{p}\n+++ b/{p}\n@@ -0,0 +1 @@\n+x\n" for p in paths
+    ).encode()
+
+
+def base_branch(repo, files, force=()):
+    """Write files into the repository and track them, force-adding the ones in force."""
+    for name, text in files.items():
+        (repo / name).parent.mkdir(parents=True, exist_ok=True)
+        (repo / name).write_text(text, encoding="utf-8")
+    subprocess.run(["git", "add", *files.keys() - set(force)], cwd=repo, check=True)
+    if force:
+        subprocess.run(["git", "add", "-f", *force], cwd=repo, check=True)
+
+
+def test_ignored_fires_on_added_ignored_files(repo, tmp_path):
+    base_branch(repo, {".gitignore": "CLAUDE.md\n.claude/\n", "docs/.gitignore": "*.log\n"})
+    diff = added("CLAUDE.md", "src/CLAUDE.md", ".claude/settings.json", "docs/a.log", "a.log")
+    assert hits(check(diff, rules_file(tmp_path, IGNORED_RULE))) == [
+        '{"path": "CLAUDE.md"',
+        '{"path": "src/CLAUDE.md"',
+        '{"path": ".claude/settings.json"',
+        '{"path": "docs/a.log"',
+    ]
+
+
+def test_ignored_uses_the_base_gitignore_not_the_pull_requests(repo, tmp_path):
+    base_branch(repo, {".gitignore": "CLAUDE.md\n"})
+    unignore = b"""\
+diff --git a/.gitignore b/.gitignore
+--- a/.gitignore
++++ b/.gitignore
+@@ -1 +1,2 @@
+ CLAUDE.md
++!CLAUDE.md
+"""
+    diff = unignore + added("CLAUDE.md", "sub/.gitignore")
+    assert hits(check(diff, rules_file(tmp_path, IGNORED_RULE))) == ['{"path": "CLAUDE.md"']
+
+
+def test_ignored_skips_tracked_files(repo, tmp_path):
+    base_branch(repo, {".gitignore": "vendor/\n", "vendor/kept.js": "x"}, force=["vendor/kept.js"])
+    diff = added("vendor/kept.js", "vendor/new.js")
+    assert hits(check(diff, rules_file(tmp_path, IGNORED_RULE))) == ['{"path": "vendor/new.js"']
+
+
+def test_ignored_outside_a_checkout_warns_and_passes(tmp_path):
+    rules = rules_file(tmp_path, IGNORED_RULE)
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    command = [sys.executable, "-I", str(ROOT / "pr-hygiene.py"), str(rules)]
+    env = {"PATH": os.environ["PATH"], "GIT_CEILING_DIRECTORIES": str(tmp_path)}
+    result = subprocess.run(
+        command, input=added("CLAUDE.md"), capture_output=True, cwd=outside, env=env, check=False
+    )
+    assert result.returncode == 0
+    assert result.stdout == b""
+    assert b"check out the base branch" in result.stderr
 
 
 def test_repo_has_no_invisible_characters():

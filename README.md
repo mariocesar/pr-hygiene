@@ -120,6 +120,7 @@ The bundled [`rules.yml`](rules.yml) covers what doesn't belong in any repositor
 | hold | `invisible-characters` | zero-width, bidi and other invisible unicode |
 | hold | `download-piped-to-shell` | `curl ... \| sh` in code and config files |
 | hold | `encoded-execution` | `eval`/`exec` of base64, hex or compiled strings |
+| hold | `ignored-files` | files the base branch's `.gitignore` ignores, added anyway (needs a checkout, below) |
 | cleanup | `editor-settings`, `os-files`, `ai-assistant-config`, `node-modules`, `build-leftovers`, `local-environment`, `scratch-files`, `archives` | the usual files that have no business in a change |
 
 ### Your own rules
@@ -162,6 +163,12 @@ rules:
     content: 'RunSQL'           # Python regex; fires only if an added line matches
     message: Raw SQL in a migration. A maintainer will check it.
 
+  - name: ignored-files         # replace a bundled rule: block instead of hold
+    severity: block
+    paths: ["*"]
+    ignored: true               # fires only on files the base branch's .gitignore ignores
+    message: A file this repository ignores. Closed.
+
   - name: ai-assistant-config   # drop a bundled rule
     enabled: false
 ```
@@ -176,6 +183,12 @@ With `extend: false` the bundled rules are ignored and only your file counts.
 When several rules match one file, the most severe wins. Among equals, the one listed first wins,
 and bundled rules come before yours.
 
+Rules with `ignored: true` ask `git check-ignore` about the base branch checked out in the
+workspace, so they read its `.gitignore` files, nested ones included, and never the pull
+request's: un-ignoring a file in the same pull request doesn't help. Files already tracked on the
+base branch never count, so a file force-added on purpose can still be changed. Without a
+checkout these rules are skipped with a warning.
+
 Content rules only see the lines the pull request adds. The API doesn't return a patch for binary
 files or for very large ones, so on those only path rules can fire.
 
@@ -184,6 +197,9 @@ To try a rules file against a local branch:
 ```sh
 git diff --diff-filter=d main | uv run pr-hygiene.py rules.yml .github/pr-hygiene.yml
 ```
+
+Run it from a checkout of `main`, such as a `git worktree`, for `ignored` rules to fire: on the
+branch itself its files are already tracked.
 
 ## Security
 

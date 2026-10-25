@@ -4,10 +4,12 @@
 Usage: git diff --diff-filter=d main | uv run pr-hygiene.py rules.yml [more.yml ...]
 Prints one JSON object per offending file (path, rule, severity, message) and exits 1.
 Rules files are read in order: a later one replaces rules of the same name and adds to exclude.
+Rules with "ignored: true" ask git about the checkout in the current directory, so run it there.
 """
 
 import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -41,9 +43,21 @@ def load_rules(files):
                 "severity": rule["severity"],
                 "paths": pathspec.GitIgnoreSpec.from_lines(rule["paths"]),
                 "content": re.compile(rule["content"]) if "content" in rule else None,
+                "ignored": rule.get("ignored") is True,
                 "message": rule["message"].strip(),
             }
     return list(rules.values()), pathspec.GitIgnoreSpec.from_lines(exclude)
+
+
+def ignored_paths(paths):
+    """Paths the .gitignore files of the current checkout ignore. Tracked files never are."""
+    command = ["git", "-c", "core.excludesFile=/dev/null", "check-ignore", "--stdin", "-z"]
+    run = subprocess.run(command, input="\0".join(paths).encode(), capture_output=True, check=False)
+    if run.returncode > 1:
+        error = run.stderr.decode().strip()
+        print(f"Rules with ignored skipped, check out the base branch: {error}", file=sys.stderr)
+        return set()
+    return set(run.stdout.decode().split("\0")) - {""}
 
 
 def main():
@@ -51,16 +65,23 @@ def main():
         sys.exit(__doc__.strip())
     rules, exclude = load_rules(sys.argv[1:])
     diff = sys.stdin.buffer.read().decode("utf-8", "replace")
+    files = [
+        file
+        for file in unidiff.PatchSet(diff)
+        if not file.is_removed_file and not exclude.match_file(file.path)
+    ]
+    ignored = set()
+    if any(rule["ignored"] for rule in rules):
+        ignored = ignored_paths([file.path for file in files])
     found = False
-    for file in unidiff.PatchSet(diff):
-        if file.is_removed_file or exclude.match_file(file.path):
-            continue
+    for file in files:
         added = [line.value.rstrip("\n") for hunk in file for line in hunk if line.is_added]
         hits = [
             rule
             for rule in rules
             if rule["paths"].match_file(file.path)
             and (rule["content"] is None or any(rule["content"].search(line) for line in added))
+            and (not rule["ignored"] or file.path in ignored)
         ]
         if hits:
             worst = max(hits, key=lambda rule: SEVERITIES.index(rule["severity"]))

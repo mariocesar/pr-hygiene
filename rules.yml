@@ -13,6 +13,8 @@
 #     paths     .gitignore patterns: a pattern without "/" matches the file name at any depth,
 #               one with "/" is anchored at the root, "**" spans directories, "!" negates
 #     content   optional Python regex; the rule only fires when an added line of the file matches
+#     ignored   optional, true: the rule only fires on files the base branch's .gitignore files
+#               ignore and that are not tracked there yet. Needs the base branch checked out.
 #     message   what the author or the maintainer reads
 #     enabled   set to false in your own file to drop a bundled rule
 #
@@ -81,6 +83,14 @@ rules:
     paths: *code
     content: '\b(eval|exec|Function)\s*\(\s*(base64|atob|compile|__import__|bytes\.fromhex|codecs\.decode|Buffer\.from)\b'  # yamllint disable-line rule:line-length
     message: Code built at run time from an encoded string.
+
+  - name: ignored-files
+    severity: hold
+    paths: ["*"]
+    ignored: true
+    message: >-
+      A file this repository's .gitignore ignores, added anyway. A maintainer will check why it
+      is here.
 
   # Files that have no business in a change to any project.
   - name: editor-settings

@@ -59,10 +59,12 @@ module.exports = async ({ github, context, core, exec }) => {
     rules.push(file);
   }
 
-  // Run the matcher. It exits 1 both for hits and for a broken rules file; the output tells
-  // them apart.
-  const uvArgs = ['run', '--quiet', '--frozen', '--no-dev', '--directory', env.ACTION_PATH];
-  const run = await exec.getExecOutput('uv', [...uvArgs, 'pr-hygiene.py', ...rules], {
+  // Run the matcher in the workspace, where "ignored" rules read the base branch's .gitignore.
+  // It exits 1 both for hits and for a broken rules file; the output tells them apart.
+  const uvArgs = ['run', '--quiet', '--frozen', '--no-dev', '--project', env.ACTION_PATH];
+  const script = path.join(env.ACTION_PATH, 'pr-hygiene.py');
+  const run = await exec.getExecOutput('uv', [...uvArgs, script, ...rules], {
+    cwd: env.GITHUB_WORKSPACE,
     input: Buffer.from(diff),
     ignoreReturnCode: true,
     silent: true,
@@ -71,6 +73,9 @@ module.exports = async ({ github, context, core, exec }) => {
   const hits = lines.map((line) => JSON.parse(line));
   if (run.exitCode > 1 || (run.exitCode === 1 && hits.length === 0)) {
     return core.setFailed(run.stderr.trim() || `pr-hygiene.py exited with ${run.exitCode}`);
+  }
+  if (run.stderr.trim()) {
+    core.warning(run.stderr.trim());
   }
 
   const severities = SEVERITIES.filter((s) => hits.some((hit) => hit.severity === s));

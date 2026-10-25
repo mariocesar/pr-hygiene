@@ -5,6 +5,19 @@ format. Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-10-25
+
+### Added
+
+- Rule key `ignored: true`: the rule only fires on files the base branch's `.gitignore` files
+  ignore and that it doesn't track yet. Edits to `.gitignore` in the pull request don't count.
+- Bundled rule `ignored-files` (hold) built on it. Raise it to block in your own rules file.
+
+### Changed
+
+- The matcher runs in the workspace instead of the action's directory, so it can read the base
+  branch's `.gitignore`. Without a checkout, `ignored` rules are skipped with a warning.
+
 ## [1.0.0] - 2026-10-24
 
 ### Added
@@ -20,5 +33,6 @@ format. Versions follow [Semantic Versioning](https://semver.org/).
 - Rules files take a top-level `exclude` list, replace earlier rules by name, and drop a rule
   with `enabled: false`.
 
-[Unreleased]: https://github.com/mariocesar/pr-hygiene/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/mariocesar/pr-hygiene/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/mariocesar/pr-hygiene/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/mariocesar/pr-hygiene/releases/tag/v1.0.0
